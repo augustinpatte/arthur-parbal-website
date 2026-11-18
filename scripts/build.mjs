@@ -1,6 +1,6 @@
 import { mkdir, readFile, writeFile, cp } from 'node:fs/promises';
 import { books, guides, courses } from '../src/content.mjs';
-const base=(process.env.PUBLIC_SITE_URL||'https://arthur-parbal-website.pages.dev').replace(/\/$/,'');
+const base=(process.env.PUBLIC_SITE_URL||'https://arthurparbal.com').replace(/\/$/,'');
 const out='dist'; await mkdir(out,{recursive:true}); await cp('public',out,{recursive:true}); await cp('_headers',out+'/_headers');
 const css=await readFile('src/styles.css','utf8');
 const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
