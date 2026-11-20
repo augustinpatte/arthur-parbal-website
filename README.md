@@ -13,7 +13,27 @@ npm run check
 find dist -name '*.html' -type f | wc -l
 ```
 
-### Current direct-upload workflow
-The existing `arthur-parbal-website` Pages project supports Cloudflare Dashboard Direct Upload. Build and validate locally, then upload the contents of `dist/` as a ZIP or folder through that project’s **Create deployment** page and choose the intended environment. Do not create a replacement Pages project.
+### Production deployment — existing Pages project
+This site is deployed directly to the existing Cloudflare Pages project, `arthur-parbal-website`, on its `main` branch. Do **not** create another Pages project, change DNS/custom-domain settings, or depend on GitHub Actions for releases.
 
-`wrangler pages deploy dist --project-name=arthur-parbal-website --branch=main` is the equivalent CLI command after Wrangler has a valid authorized Cloudflare login. The repository does not store Cloudflare credentials.
+Run the release flow in this order:
+
+```sh
+# Preserve any local work, then synchronize the checked-out main branch.
+git fetch origin main
+git merge --ff-only origin/main
+
+npm ci --ignore-scripts
+npm run build
+npm run check
+test -d dist
+find dist -type f -name '*.html' | wc -l
+
+# Requires an already-authorized Wrangler login.
+npx wrangler whoami
+npx wrangler pages deploy dist \
+  --project-name=arthur-parbal-website \
+  --branch=main
+```
+
+For content batches, use: **Write → Validate → Build → Commit → Push → Direct deploy → Verify production**. Verify the production sitemap and the newly added URLs after each deployment; a successful upload is not evidence that pages have been indexed. Cloudflare credentials are never stored in this repository.
